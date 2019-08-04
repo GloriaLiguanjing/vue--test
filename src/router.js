@@ -5,6 +5,7 @@ import Index from './views/Index.vue'
 import Like from './components/Like.vue'
 import Article from './components/Article.vue'
 import Category from './components/Category.vue'
+import Charts from './components/Charts.vue'
 Vue.use(Router)
 
 export default new Router({
@@ -14,8 +15,14 @@ export default new Router({
     {
       path: '/',
       name: '首页',
+      redirect:'/charts',
       component:Index,
       children:[
+        {
+          path:'/charts',
+          name:'图表',
+          component:Charts,
+        },
         {
           path:'/org',
           name:'组织机构',
