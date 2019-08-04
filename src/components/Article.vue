@@ -18,12 +18,8 @@
 					<div v-else>
 						<div class="container-fulid">
 							<div class="row article-button">
-								<div class="col-lg-1 col-md-2 dol-sm-3 col-xs-2">
-									<el-button type="primary" @click="changeActive()">添加文章</el-button>
-								</div>
-								<div class="col-lg-1 col-md-2 dol-sm-3 col-xs-2">
-									<el-button type="primary" @click="aduitArticle()">审核文章</el-button>
-								</div>
+								<el-button type="primary" @click="changeActive()">添加文章</el-button>
+								<el-button type="primary" @click="aduitArticle()">审核文章</el-button>
 							</div>
 							<div class="row article-data">
 								<articleShow ref="articleShow"></articleShow>
@@ -62,7 +58,10 @@ export default {
 			this.active = !this.active;
 		},
 		aduitArticle() {
-			alert("此功能正在开发")
+			this.$message({
+				message:'此功能正在开发',
+				type:'error'
+			})
 		}
 	},
 	mounted() {

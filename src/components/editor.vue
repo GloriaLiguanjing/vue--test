@@ -113,20 +113,19 @@
 					</el-input>
 				</el-form-item>
 				<el-form-item>
-					<el-button type="primary"  @click="next">下一步</el-button>
+					<el-button type="primary"  @click="submitForm('articleForm')">下一步</el-button>
 					<el-button @click="resetForm('articleForm')">重置</el-button>
 				</el-form-item>
 				</el-form>
 		</div>
         <div class="step2" v-show="this.active == 1">
             <div id="editor"></div>
-
 		</div>
 		<div class="step3" v-show="this.active==2">
             <img src="../assets/img/addArticleSuccess.png"/>
 		</div>
 	   <el-button v-if="this.active == 1" style="margin-top: 12px;" @click="Predept()">上一步</el-button>
-	   <el-button v-if="this.active == 1" style="margin-top: 12px;" @click="submitForm('articleForm')">下一步</el-button>
+	   <el-button v-if="this.active == 1" style="margin-top: 12px;" @click="request()">下一步</el-button>
  	   <el-button v-if="this.active == 2" style="margin-top: 12px; margin-left:800px;" @click="next">返回文章</el-button>
    </div>
  
@@ -145,8 +144,8 @@ import { constants } from 'crypto';
 			categorys: [],
 			articleForm: {
 				title: '',
-				categoryId: '',
-				orgId:'',
+				categoryId: 0,
+				orgId:0,
 				source: '',
 				sourceUrl: '',
 				abstraction: '',
@@ -195,8 +194,7 @@ import { constants } from 'crypto';
 		methods: {
 		  init() {
 			const _this = this;
-			this.editor = new E('#editor');
-				
+			this.editor = new E('#editor');	
 			this.setMenus();//设置菜单
 			this.editor.create();//创建编辑器
 			this.editor.change = function() { // 这里是change 不是官方文档中的 onchange
@@ -230,7 +228,7 @@ import { constants } from 'crypto';
 				this.$refs[formName].resetFields();
 			},
 		next() {
-				if (++this.active > 2) this.active = 0;
+				this.active
 			},
 		Predept(){
 			this.active=0;
@@ -267,17 +265,53 @@ import { constants } from 'crypto';
 			
 		  },
 		getHtml() {
-			this.articleForm.body=this.editor.txt.html()
+			this.articleForm.body=this.editor.txt.html();
+			console.log("1111111");
+			console.log(this.articleForm.body);
 		    return this.articleForm.body;
 		  },
 		setHtml(txt) {
 		    this.editor.txt.html(txt);
 		  },
+		 request(){
+
+			   if (++this.active > 2) this.active = 0;
+			   this.getHtml();
+               this.postRequest('/articles',{
+				  title: this.articleForm.title,
+				  categoryId: this.articleForm.categoryId,
+				  orgId:this.articleForm.orgId,
+				  source:this.articleForm.source,
+				  sourceUrl: this.articleForm.sourceUrl,
+				  abstraction: this.articleForm.abstraction,
+				  tagIds: this.articleForm.tagIds,
+				  type: this.articleForm.type,
+				  author:this.articleForm.author,
+				  featured:this.articleForm.featured,
+				  sticky:this.articleForm.sticky,
+				  promoted:this.articleForm.promoted,
+                  body:this.articleForm.body
+				}).then((resp)=>{
+                   console.log(resp);
+				   if(resp.data.status==200){
+				   this.$message({
+					   message:'添加成功',
+					   type:'success'
+				   })
+				}
+				else{
+                     this.$message({
+					   message:'添加失败',
+					   type:'error'
+				   })
+				}
+				})
+		 },
 		 submitForm(formName) {
 			this.$refs[formName].validate((valid) => {
 			if (valid) {
 				if (++this.active > 2) this.active = 0;
-				this.getHtml();
+				
 				console.log(this.articleForm);
 				if(this.articleForm.featured==false){
 					this.articleForm.featured=0
@@ -294,39 +328,9 @@ import { constants } from 'crypto';
 				}else{
 					this.articleForm.featured=1
 				}
-				this.postRequest('/articles',{
-				  title: this.articleForm.title,
-				  categoryId: this.articleForm.categoryId,
-				  orgId:this.articleForm.orgId,
-				  source:this.articleForm.source,
-				  sourceUrl: this.articleForm.sourceUrl,
-				  abstraction: this.articleForm.abstraction,
-				  tagIds: this.articleForm.tagIds,
-				  type: this.articleForm.type,
-				  author:this.articleForm.author,
-				  featured:this.articleForm.featured,
-				  sticky:this.articleForm.sticky,
-				  promoted:this.articleForm.promoted,
-                  body:this.articleForm.body
-				}).then((resp)=>{					
-					if(resp.data.data.status==200){
-				   this.$message({
-					   message:'添加成功',
-					   type:'success'
-				   })
-				}
-				else{
-                     this.$message({
-					   message:'添加失败',
-					   type:'error'
-				   })
-				}
-				})
+				
 			} else {
-				this.$message({
-					   message:'填写不正确',
-					   type:'error'
-				   });
+				console.log('error submit');
 				return false;
 			}
         });

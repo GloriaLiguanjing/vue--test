@@ -35,7 +35,7 @@ export default {
     methods: {
         initDate() {
             axios({
-                url: 'http://192.168.124.12:3000/items',
+                url: 'http://192.168.124.4:3000/items',
                 method: 'get'
             }).then((response) => {
                 // console.log(response.data);
@@ -75,7 +75,7 @@ export default {
     min-height: 400px;
 }
 
-.el-menu-vertical-demo {}
+
 
 .el-submenu .el-menu-item {
     min-width: 180px;

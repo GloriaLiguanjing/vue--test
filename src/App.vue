@@ -38,12 +38,4 @@ a{text-decoration:none;}
 body{
   background-color: #F0F2F5 !important;
 }
-.fade-enter,
-.fade-leave-active {
-  opacity: 0;
-}
-.fade-enter-active,
-.fade-leave-active {
-  transition: opacity 0.5s;
-}
 </style>

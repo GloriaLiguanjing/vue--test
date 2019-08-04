@@ -30,13 +30,13 @@
         </el-form-item>
         <el-form-item label="栏目名称" :label-width="formLabelWidth" prop="name">
           <el-input v-model="addForm.name" auto-complete="off"></el-input>
-        </el-form-item prop="seoTitle">
+        </el-form-item >
         <el-form-item label="栏目标题" :label-width="formLabelWidth">
           <el-input v-model="addForm.seoTitle" auto-complete="off"></el-input>
-        </el-form-item prop="seoKeyword">
+        </el-form-item >
         <el-form-item label="SEO关键字" :label-width="formLabelWidth">
           <el-input v-model="addForm.seoKeyword" auto-complete="off"></el-input>
-        </el-form-item prop="seoDesc">
+        </el-form-item>
         <el-form-item label="栏目表述" :label-width="formLabelWidth">
           <el-input v-model="addForm.seoDesc" auto-complete="off"></el-input>
         </el-form-item>
@@ -61,8 +61,10 @@
     <el-dialog title="编辑栏目" :visible.sync="editCategoryForm">
       <!-- 编辑的 -->
       <el-form :model="editForm" :rules="rules" ref="editForm">
-        <el-form-item label="上级栏目" :label-width="formLabelWidth">
-          <el-input v-model="editForm.parentName" auto-complete="off"></el-input>
+        <el-form-item v-if="editForm.parentName"  label="上级栏目" :label-width="formLabelWidth">
+          <el-cascader :options="options" value="editForm.parentId" :show-all-levels="false" clearable v-model="editForm.parentId" filterable :props="{ multiple: false,value:'id',emitPath:false,label:'name',checkStrictly: true
+ }"></el-cascader>
+          <!-- <el-input v-model="editForm .parentName" auto-complete="off"></el-input> -->
         </el-form-item>
         <el-form-item label="栏目名称" :label-width="formLabelWidth">
           <el-input v-model="editForm.name" auto-complete="off"></el-input>
@@ -102,13 +104,13 @@
         </el-form-item>
         <el-form-item label="栏目名称" :label-width="formLabelWidth" prop="name">
           <el-input v-model="addForm.name" auto-complete="off"></el-input>
-        </el-form-item prop="seoTitle">
+        </el-form-item >
         <el-form-item label="栏目标题" :label-width="formLabelWidth">
           <el-input v-model="addForm.seoTitle" auto-complete="off"></el-input>
-        </el-form-item prop="seoKeyword">
+        </el-form-item >
         <el-form-item label="SEO关键字" :label-width="formLabelWidth">
           <el-input v-model="addForm.seoKeyword" auto-complete="off"></el-input>
-        </el-form-item prop="seoDesc">
+        </el-form-item>
         <el-form-item label="栏目表述" :label-width="formLabelWidth">
           <el-input v-model="addForm.seoDesc" auto-complete="off"></el-input>
         </el-form-item>
@@ -174,6 +176,7 @@ export default {
       },
       editForm: {
         parentId: "",
+        parentName:'',
         name: "",
         seoTitle: "",
         seoKeyword: "",
@@ -245,11 +248,27 @@ export default {
         if (valid) {
           console.log("添加的addForm")
           console.log(this.addForm)
+          this.postRequest('/article-categorys',{
+              parentId: this.addForm.parentId,
+              name: this.addForm.name,
+              seoTitle: this.addForm.seoTitle,
+              seoKeyword: this.addForm.seoKeyword,
+              seoDesc: this.addForm.seoDesc,
+              published: this.addForm.published, //(1启用，0停用)
+              publishArticle: this.addForm.publishArticle, //(1启用，0停用)
+          }).then(resp=>{
+            console.log(resp);
+            if(resp.status == 200){
+              this.$message({
+                message:'添加成功',
+                type:'success'
+              })
+            }
+          })
           // this.postRequest('/article-categorys',this.addForm).then(resp => {
           //   console.log(resp.data)
           // }).catch(err => {console.log(err)})
-          alert('submit!');
-          this.addNodeCategoryForm = !this.addNodeCategoryForm; //关闭弹窗
+          this.addCategoryForm = !this.addCategoryForm; //关闭弹窗
           this.addForm = this.form   //清空表单
         } else {
           console.log('error submit!!');
@@ -262,13 +281,38 @@ export default {
       this.addForm = this.form
     },
     editCategoryFormAddSubmit() {
+      console.log(this.editForm);
       this.editCategoryForm = !this.editCategoryForm;
+      this.putRequest('/article-categorys',{
+              id:this.editForm.id,
+              parentId: this.editForm.parentId,
+              name: this.editForm.name,
+              seoTitle: this.editForm.seoTitle,
+              seoKeyword: this.editForm.seoKeyword,
+              seoDesc: this.editForm.seoDesc,
+              published: this.editForm.published, //(1启用，0停用)
+              publishArticle: this.editForm.publishArticle, //(1启用，0停用)
+      }).then(resp=>{
+        console.log(resp);
+        
+        if(resp.status == 200){
+          this.$message({
+            message:resp.data
+          })
+        }else{
+          this.$message({
+            message:'修改失败',
+            type:'error'
+          })
+        }
+        this.initDate();
+      });
       console.log(this.editForm)
       this.editForm = this.form
     },
     editCategoryFormCancelSubmit() {
       this.editCategoryForm = !this.editCategoryForm;
-      this.editForm = this.form
+      this.editForm = []
     },
     addCategoryNodeFormCancelSubmit() {
       this.addNodeCategoryForm = !this.addNodeCategoryForm;
@@ -308,6 +352,7 @@ export default {
     edit(node, data, store) {
       this.editCategoryForm = !this.editCategoryForm;
       this.editForm = data
+      this.options = this.data
       console.log("edit:")
       console.log(data)
     },

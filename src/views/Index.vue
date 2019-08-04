@@ -1,9 +1,9 @@
 <template>
-	<div class="index" :class="leftwidth">
+	<div class="index">
 		<div class="leftmenu">
 			<LeftMenu></LeftMenu>
 		</div>
-		<div>
+		<div :class="leftwidth">
 			<div class="rightcontent-top">
 				<Breadcrumb></Breadcrumb>
 			</div>
@@ -51,7 +51,7 @@
     height: 100%;
     top: 0;
     left: 0;
-	z-index: 10003;
+	z-index:99999;
 }
 .rightcontent-180{
 	margin-left: 180px;
@@ -73,7 +73,7 @@
     position: fixed;
     top: 0;
     width: 100%;
-    z-index: 10;
+    z-index: 99998;
 	transition-property: width;
 	transition-duration: 1s;
 }
