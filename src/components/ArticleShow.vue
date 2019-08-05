@@ -107,9 +107,12 @@
 
 .article-item-content-title {
     font-size: 16px;
-    display: block;
+    display: -webkit-box;
     margin: 5px 0;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 1;
     color: #333;
+    overflow: hidden;
 }
 
 .article-item-content-abstraction {
