@@ -12,6 +12,7 @@ import {putRequest} from './api/api'
 import {getListRequest} from './api/api'
 import {uploadFileRequest} from './api/api'
 import './assets/css/bootstrap.css'
+import echarts from 'echarts'
 Vue.prototype.getRequest = getRequest;
 Vue.prototype.postRequest = postRequest;
 Vue.prototype.deleteRequest = deleteRequest;
@@ -20,7 +21,7 @@ Vue.prototype.getListRequest = getListRequest;
 Vue.prototype.uploadFileRequest = uploadFileRequest;
 Vue.use(element)
 Vue.prototype.bus = new Vue()
-
+Vue.prototype.$echarts = echarts
 // router.beforeEach((to,from,next)=>{
 //   if(to.name == 'Login'){
 //     next();
