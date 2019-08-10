@@ -6,6 +6,7 @@ import Like from './components/Like.vue'
 import Article from './components/Article.vue'
 import Category from './components/Category.vue'
 import Charts from './components/Charts.vue'
+import VueCropper from './views/CropperIndex.vue'
 Vue.use(Router)
 
 export default new Router({
@@ -42,6 +43,11 @@ export default new Router({
           path:'/article',
           name:'文章',
           component:Article,
+        },
+        {
+          path:'/cropper',
+          name:'截图',
+          component:VueCropper,
         }
       ]
     },

@@ -35,7 +35,7 @@ export default {
     methods: {
         initDate() {
             axios({
-                url: 'http://192.168.124.4:3000/items',
+                url: 'http://localhost:3000/items',
                 method: 'get'
             }).then((response) => {
                 // console.log(response.data);

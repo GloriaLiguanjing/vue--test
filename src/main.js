@@ -13,6 +13,7 @@ import {getListRequest} from './api/api'
 import {uploadFileRequest} from './api/api'
 import './assets/css/bootstrap.css'
 import echarts from 'echarts'
+import VueCropper from 'vue-cropper'
 Vue.prototype.getRequest = getRequest;
 Vue.prototype.postRequest = postRequest;
 Vue.prototype.deleteRequest = deleteRequest;
@@ -22,6 +23,7 @@ Vue.prototype.uploadFileRequest = uploadFileRequest;
 Vue.use(element)
 Vue.prototype.bus = new Vue()
 Vue.prototype.$echarts = echarts
+Vue.use(VueCropper)
 // router.beforeEach((to,from,next)=>{
 //   if(to.name == 'Login'){
 //     next();

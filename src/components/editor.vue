@@ -114,6 +114,7 @@
 				</el-form-item>
 				<el-form-item>
 					<el-button type="primary"  @click="submitForm('articleForm')">下一步</el-button>
+					<el-button type="primary"  @click="next">xia下一步</el-button>
 					<el-button @click="resetForm('articleForm')">重置</el-button>
 				</el-form-item>
 				</el-form>
@@ -196,6 +197,7 @@ import { constants } from 'crypto';
 			const _this = this;
 			this.editor = new E('#editor');	
 			this.setMenus();//设置菜单
+			
 			this.editor.create();//创建编辑器
 			this.editor.change = function() { // 这里是change 不是官方文档中的 onchange
 			  console.log(this.txt.html());// 编辑区域内容变化时，实时打印出当前内容
@@ -212,7 +214,7 @@ import { constants } from 'crypto';
 				this.categorys=resp.data;
 			}),
 		   axios({
-				url:'http://192.168.124.4:3000/tags',
+				url:'http://localhost:3000/tags',
 				methods:'get'
 			}).then((response)=>{
 				console.log(response.data);		
@@ -228,7 +230,7 @@ import { constants } from 'crypto';
 				this.$refs[formName].resetFields();
 			},
 		next() {
-				this.active
+				 if (++this.active > 2) this.active = 0;
 			},
 		Predept(){
 			this.active=0;
@@ -262,11 +264,65 @@ import { constants } from 'crypto';
 			'undo',  // 撤销
 			'redo'  // 重复
 		]
-			
+			 // 下面两个配置，使用其中一个即可显示“上传图片”的tab。但是两者不要同时使用！！！
+            // editor.customConfig.uploadImgShowBase64 = true;  // 使用 base64 保存图片
+            this.editor.customConfig.uploadImgServer = '/upload';  // 上传图片到服务器
+            // 显示“网络图片”tab
+            this.editor.customConfig.showLinkImg = true;
+            // 配置服务器端地址
+            this.editor.customConfig.uploadImgServer = 'http://192.168.124.7:8081/article/uploadimg';  //改为实际服务器url
+
+            this.editor.customConfig.uploadFileName = 'photo';
+            // 将图片大小限制为 3M  默认5M
+            this.editor.customConfig.uploadImgMaxSize = 3 * 1024 * 1024
+            // 限制一次最多上传 5 张图片  默认10000（即不限制）
+            this.editor.customConfig.uploadImgMaxLength = 5;
+
+            this.editor.customConfig.uploadImgTimeout = 50000;
+            this.editor.customConfig.uploadImgHooks = {
+                before: function (xhr, editor, files) {
+                    // 图片上传之前触发
+                    // xhr 是 XMLHttpRequst 对象，editor 是编辑器对象，files 是选择的图片文件
+            
+                    // 如果返回的结果是 {prevent: true, msg: 'xxxx'} 则表示用户放弃上传
+                    // return {
+                    //     prevent: true,
+                    //     msg: '放弃上传'
+                    // }
+                },
+                success: function (xhr, editor, result) {
+                    // 图片上传并返回结果，图片插入成功之后触发
+                    // xhr 是 XMLHttpRequst 对象，editor 是编辑器对象，result 是服务器端返回的结果
+                },
+                fail: function (xhr, editor, result) {
+                    // 图片上传并返回结果，但图片插入错误时触发
+                    // xhr 是 XMLHttpRequst 对象，editor 是编辑器对象，result 是服务器端返回的结果
+                },
+                error: function (xhr, editor) {
+                    // 图片上传出错时触发
+                    // xhr 是 XMLHttpRequst 对象，editor 是编辑器对象
+                },
+                timeout: function (xhr, editor) {
+                    // 图片上传超时时触发
+                    // xhr 是 XMLHttpRequst 对象，editor 是编辑器对象
+                },
+            
+                // 如果服务器端返回的不是 {errno:0, data: [...]} 这种格式，可使用该配置
+                // （但是，服务器端返回的必须是一个 JSON 格式字符串！！！否则会报错）
+                customInsert: function (insertImg, result, editor) {
+                    // 图片上传并返回结果，自定义插入图片的事件（而不是编辑器自动插入图片！！！）
+                    // insertImg 是插入图片的函数，editor 是编辑器对象，result 是服务器端返回的结果
+                    console.log(result)
+                    // 举例：假如上传图片成功后，服务器端返回的是 {url:'....'} 这种格式，即可这样插入图片：
+                    var url = result.msg
+                    insertImg(url)
+            
+                    // result 必须是一个 JSON 格式字符串！！！否则报错
+				}
+			}
 		  },
 		getHtml() {
 			this.articleForm.body=this.editor.txt.html();
-			console.log("1111111");
 			console.log(this.articleForm.body);
 		    return this.articleForm.body;
 		  },
@@ -355,5 +411,4 @@ import { constants } from 'crypto';
 .step3{
 	text-align: center;
 }
-
 </style>
