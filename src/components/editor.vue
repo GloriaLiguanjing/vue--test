@@ -270,7 +270,7 @@ import { constants } from 'crypto';
             // 显示“网络图片”tab
             this.editor.customConfig.showLinkImg = true;
             // 配置服务器端地址
-            this.editor.customConfig.uploadImgServer = 'http://192.168.124.7:8081/article/uploadimg';  //改为实际服务器url
+            this.editor.customConfig.uploadImgServer = 'http://192.168.124.7:8088/articles/uploadimg';  //改为实际服务器url
 
             this.editor.customConfig.uploadFileName = 'photo';
             // 将图片大小限制为 3M  默认5M
@@ -314,7 +314,7 @@ import { constants } from 'crypto';
                     // insertImg 是插入图片的函数，editor 是编辑器对象，result 是服务器端返回的结果
                     console.log(result)
                     // 举例：假如上传图片成功后，服务器端返回的是 {url:'....'} 这种格式，即可这样插入图片：
-                    var url = result.msg
+                    var url = result.data
                     insertImg(url)
             
                     // result 必须是一个 JSON 格式字符串！！！否则报错
@@ -354,6 +354,8 @@ import { constants } from 'crypto';
 					   message:'添加成功',
 					   type:'success'
 				   })
+				
+				
 				}
 				else{
                      this.$message({

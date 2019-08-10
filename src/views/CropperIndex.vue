@@ -1,247 +1,151 @@
 <template>
-  <div>
-    <!-- 多图片上传 -->
-    <el-upload v-if="multiple" action='string' list-type="picture-card" :on-preview="handlePreview" :auto-upload="false" :on-remove="handleRemove" :http-request="upload" :on-change="consoleFL" :file-list="uploadList">
-      <i class="el-icon-plus"></i>
-    </el-upload>
-    <!-- 单图片上传 -->
-    <el-upload v-else class="avatar-uploader" action="'string'" :auto-upload="false" :show-file-list="false" :on-change="handleCrop" :http-request="upload">
-      <img v-if="imageUrl" :src="imageUrl" class="avatar" ref="singleImg" @mouseenter="mouseEnter" @mouseleave="mouseLeave" :style="{width:width+'px',height:height+'px'}">
-      <i v-else class="el-icon-plus avatar-uploader-icon" :style="{width:width+'px',height:height+'px','line-height':height+'px','font-size':height/6+'px'}"></i>
-      <!-- 单图片上传状态显示 -->
-      <!-- <div v-if="imageUrl" class="reupload" ref="reupload" @click.stop="handlePreviewSingle" @mouseenter="mouseEnter" @mouseleave="mouseLeave" :style="{width:reuploadWidth+'px',height:reuploadWidth+'px','line-height':reuploadWidth+'px','font-size':reuploadWidth/5+'px'}">重新上传</div> -->
-      <div id="uploadIcon" v-if="imageUrl" ref="reupload" @mouseenter="mouseEnter" @mouseleave="mouseLeave" :style="{width:'100%'}">
-        <i class="el-icon-zoom-in" @click.stop="handlePreviewSingle" :style="{color:'#2E2E2E',fontSize:'25px',display:'inline-block',paddingRight:'15px'}"></i>
-        <i class="el-icon-upload" :style="{color:'#2E2E2E',fontSize:'25px',display:'inline-block'}"></i>
-      </div>
-      <div class="reupload" ref="uploading" :style="{width:reuploadWidth+'px',height:reuploadWidth+'px','line-height':reuploadWidth+'px','font-size':reuploadWidth/5+'px'}">上传中..</div>
-      <div class="reupload" ref="failUpload" :style="{width:reuploadWidth+'px',height:reuploadWidth+'px','line-height':reuploadWidth+'px','font-size':reuploadWidth/5+'px'}">上传失败</div>
-    </el-upload>
-    <!-- 多图片预览弹窗 -->
-    <el-dialog :visible.sync="dialogVisible">
-      <img width="100%" :src="dialogImageUrl" alt="">
-    </el-dialog>
-    <!-- 剪裁组件弹窗 -->
-    <el-dialog :visible.sync="cropperModel" width="800px" :before-close="beforeClose">
-      <Cropper :img-file="file" ref="vueCropper" :fixedNumber="fixedNumber" @upload="upload">
-      </Cropper>
-    </el-dialog>
+  <div class="app">
+    <upload-cropper
+      :limit="1"
+      :limitSize="1024"
+      :on-change="handleOnChange"
+      :http-request="handleHttpRequest"
+      :on-success="handleSuccess"
+      :on-error="handleError"
+      :on-remove="handleRemove"
+      :fileList="fileList1"
+      :cropper="{
+        height: 300,
+        autoCrop: true,
+        autoCropWidth: 300,
+        autoCropHeight: 200,
+        fixed: false
+      }"></upload-cropper>
+
+    <!-- 确认上传 -->
+    <el-button @click="" style="margin-top:10px;">取 消</el-button>
+    <el-button type="primary" @click="postForm()" style="margin-top:10px;">上传</el-button>
+    <el-button type="primary" @click="getUploadData()" style="margin-top:10px;">console.log(表单数据)</el-button>
   </div>
 </template>
+
 <script>
-import Cropper from '../components/VueCro.vue'
-import axios from 'axios'
-export default {
-  name: 'uploader',
-  props: {
-    targetUrl: {
-      // 上传地址
-      type: String,
-      default: '/storage/upload'
-    },
-    multiple: {
-      // 多图开关
-      type: Boolean,
-      default: false
-    },
-    initUrl: {
-      // 初始图片链接
-      default: ''
-    },
-    fixedNumber: {
-      // 剪裁框比例设置
-      default: function () {
-        return [3, 1]
-      }
-    },
-    width: {
-      // 单图剪裁框宽度
-      type: Number,
-      default: 178
-    },
-    height: {
-      // 单图剪裁框高度
-      type: Number,
-      default: 178
-    }
-  },
-  data () {
-    return {
-      file: '', // 当前被选择的图片文件
-      imageUrl: '', // 单图情况框内图片链接
-      dialogImageUrl: '', // 多图情况弹窗内图片链接
-      uploadList: [], // 上传图片列表
-      reupload: true, // 控制"重新上传"开关
-      dialogVisible: false, // 展示弹窗开关
-      cropperModel: false, // 剪裁组件弹窗开关
-      reuploadWidth: this.height * 0.7 // 动态改变”重新上传“大小
-    }
-  },
-  updated () {
-    if (this.$refs.vueCropper) {
-      this.$refs.vueCropper.Update()
-    }
-  },
-  watch: {
-    initUrl: function (val) {
-      // 监听传入初始化图片
-      console.info('watch')
-      console.info(val)
-      if (val) {
-        if (typeof this.initUrl === 'string') {
-          this.imageUrl = val
-        } else {
-          this.uploadList = this.formatImgArr(val)
-        }
-      }
-    }
-  },
-  mounted () {
-    if (typeof this.initUrl === 'string') {
-      this.imageUrl = this.initUrl
-    } else {
-      this.uploadList = this.formatImgArr(this.initUrl)
-    }
-  },
-  methods: {
-    /** **************************** multiple多图情况 **************************************/
-    handlePreview (file) {
-      // 点击进行图片展示
-      this.dialogImageUrl = file.url
-      this.dialogVisible = true
-    },
-    handleRemove (file, fileList) {
-      // 删除图片后更新图片文件列表并通知父级变化
-      this.uploadList = fileList
-      this.$emit('imgupload', this.formatImgArr(this.uploadList))
-    },
-    consoleFL (file, fileList) {
-      // 弹出剪裁框，将当前文件设置为文件
-      this.cropperModel = true
-      this.file = file
-      this.uploadList = fileList
-    },
-    /************************************************************************************/
+import { fips } from 'crypto';
+  // import axios from 'axios'
 
-    /****************************** single单图情况 **************************************/
-    handlePreviewSingle (file) {//点击进行图片展示
-      this.dialogImageUrl = this.file.url
-      this.dialogVisible = true
-    },
-    mouseEnter () {//鼠标划入显示“重新上传”
-      this.$refs.reupload.style.display = 'block'
-      if (this.$refs.failUpload.style.display === 'block') {
-        this.$refs.failUpload.style.display = 'none'
+  export default {
+    name: 'exampleUploadCropper',
+    data() {
+      return {
+        // 初始化数据
+        fileList1: [],
+        fileListMap: {} // 键值对，用来存储上传图片后的 uid:url
       }
-      this.$refs.singleImg.style.opacity = '0.6'
     },
-    mouseLeave () {
-      // 鼠标划出隐藏“重新上传”
-      this.$refs.reupload.style.display = 'none'
-      this.$refs.singleImg.style.opacity = '1'
-    },
-    handleCrop (file, files) {
-      // 点击弹出剪裁框
-      this.cropperModel = true
-      this.file = file
-      // this.imageUrl = file.url
-    },
-    /************************************************************************************/
+    methods: {
+      handleOnChange(file, fileList) {
+        console.log('onChange', file, fileList)
+        console.log('onChange:fileList1', this.fileList1)
+        this.fileList1 = fileList
+      },
+      handleRemove(file, fileList) {
+        console.log('onRemove', file, fileList)
+        console.log('onRemove:fileList1', this.fileList1)
+        this.fileList1 = fileList
+      },
+      handleHttpRequest(options, ajax) {
+        // --------------
+        // 此处可用此方法动态修改请求 options，默认使用 ajax 发送请求，但只限于 form-data 形式表单 post|put 提交
+        // options.action = '1231231'
+        // options.headers = {
+        //   'Accept': 'application/json',
+        //   'X-Requested-With': 'XMLHttpRequest'
+        // }
+        // ajax(options)
+        // --------------
 
-    upload (data) {
-      // 自定义upload事件
-      if (!this.multiple) {
-        // 如果单图，则显示正在上传
-        this.$refs.uploading.style.display = 'block'
+        // ---------------
+        // 若要自定义发送请求，此处一定要是 Promise 类的异步函数，才会执行 onSuccess 等回调
+        // 此处以 axios 发送请求举例
+        return new Promise((resolve, reject) => {
+          // ---------
+          // 自定义请求的进度条
+          // this.fileList1.forEach((item, index) => {
+          //   if (item.uid === options.file.uid) {
+          //     axios.post('https://a76a9787-346f-4247-83df-3c735332f3a2.mock.pstmn.io/create', {}, {
+          //       onUploadProgress: progressEvent => {
+          //         var complete = (progressEvent.loaded / progressEvent.total * 100 | 0) + '%'
+          //         item.status = 'uploading'
+          //         item.percentage = complete || 0
+          //         console.log('上传进度：', complete)
+          //       }
+          //     }).then(() => {
+          //       console.log('上传成功')
+          //       resolve()
+          //     })
+          //   }
+          // })
+          // ---------
+          resolve()
+        })
+        // ----------------
+      },
+      getUploadData() {
+        console.log('打印表单数据', this.fileList1)
+      },
+      // 处理 ELUpload 上传后的数据，用于表单提交。
+      processUploadData(data) {
+        // --------------
+        // 结果输出[url1, url1, url3]
+        // const result = []
+        // data.forEach(item => {
+        //   if (item.uid && item.status && item.status === 'success') {
+        //     result.push(this.fileListMap[item.uid] || item.url)
+        //   } else if (!item.status && item.url) {
+        //     result.push(item.url)
+        //   }
+        // })
+        // return result
+        // ---------------
+      },
+      handleSuccess(res, file, fileList) {
+        console.log('onSuccess', res, file, fileList)
+        console.log('onSuccess:fileList1', this.fileList1)
+        this.fileList1 = fileList // 上传成功后赋值
+        // 替换 url
+        // this.fileList1.forEach(item => {
+        //   if (item.uid === file.uid) {
+        //     item.url = this.fileListMap[file.uid] || item.url
+        //   }
+        // })
+      },
+      handleError(res, file, fileList) {
+        console.log('onError', res, file, fileList)
+        console.log('onError:fileList1', this.fileList1)
+        this.fileList1 = fileList
+      },
+      postForm() {
+        console.log('postFrom', this.fileList1)
+        var formData = new FormData();
+        formData.append('photo',this.fileList1[0].raw);
+        console.log(formData)
+        this.uploadFileRequest('articles/uploadimg',formData).then(resp=>{
+          if(resp.data.status == 'success'){
+            this.$message({
+              message:'上传成功',
+              type:'success'
+            });
+            alert("上传成功");
+               //清图片
+            var _this=this;
+            var file = this.fileList1[0];
+            this.fileList1.splice(0);
+            _this.handleRemove(file,this.fileList1)
+          }
+        })
       }
-      let formData = new FormData()
-      formData.append('attachment', data)
-      axios.post(this.targetUrl, formData).then(res => {
-        if (!this.multiple) {
-          // 上传完成后隐藏正在上传
-          this.$refs.uploading.style.display = 'none'
-        }
-        if (res.msg === 'success') {
-          // 上传成功将照片传回父组件
-          const currentPic = res.data.url
-          if (this.multiple) {
-            this.uploadList.push({
-              url: currentPic,
-              uid: '111'
-            })
-            this.uploadList.pop()
-            this.$emit('imgupload', this.formatImgArr(this.uploadList))
-          } else {
-            this.$emit('imgupload', currentPic)
-          }
-        } else {
-          // 上传失败则显示上传失败，如多图则从图片列表删除图片
-          if (!this.multiple) {
-            this.$refs.failUpload.style.display = 'block'
-          } else {
-            this.uploadList.pop()
-          }
-        }
-      })
-      this.cropperModel = false
-    },
-    formatImgArr (arr) {
-      const result = arr.map((item, index) => {
-        if (typeof item === 'string') {
-          return {
-            url: item,
-            uid: `index${index}`
-          }
-        } else {
-          return item.url
-        }
-      })
-      return result
-    },
-    beforeClose (done) {
-      this.uploadList.pop()
-      this.cropperModel = false
     }
-  },
-  components: {
-    Cropper
   }
-}
 </script>
+
 <style>
-  .avatar-uploader .el-upload {
-    border: 1px dashed #d9d9d9;
-    border-radius: 6px;
-    cursor: pointer;
-    position: relative;
-    overflow: hidden;
-  }
-  .avatar-uploader .el-upload:hover {
-    border-color: #409eff;
-  }
-  .avatar-uploader-icon {
-    color: #8c939d;
-    text-align: center;
-  }
-  .avatar {
-    display: block;
-  }
-  .reupload {
-    border-radius: 50%;
-    position: absolute;
-    color: #fff;
-    background-color: #000000;
-    opacity: 0.6;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    display: none;
-  }
-  #uploadIcon{
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    display: none;
-  }
+.app {
+  margin-left: 20px;
+  margin-top: 60px;
+}
 </style>
