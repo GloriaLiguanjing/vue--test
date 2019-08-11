@@ -197,7 +197,6 @@ import { constants } from 'crypto';
 			const _this = this;
 			this.editor = new E('#editor');	
 			this.setMenus();//设置菜单
-			
 			this.editor.create();//创建编辑器
 			this.editor.change = function() { // 这里是change 不是官方文档中的 onchange
 			  console.log(this.txt.html());// 编辑区域内容变化时，实时打印出当前内容

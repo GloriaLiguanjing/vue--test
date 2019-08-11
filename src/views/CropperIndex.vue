@@ -1,7 +1,7 @@
 <template>
   <div class="app">
     <upload-cropper
-      :limit="1"
+      :limit="3"
       :limitSize="1024"
       :on-change="handleOnChange"
       :http-request="handleHttpRequest"
@@ -20,7 +20,6 @@
     <!-- 确认上传 -->
     <el-button @click="" style="margin-top:10px;">取 消</el-button>
     <el-button type="primary" @click="postForm()" style="margin-top:10px;">上传</el-button>
-    <el-button type="primary" @click="getUploadData()" style="margin-top:10px;">console.log(表单数据)</el-button>
   </div>
 </template>
 
@@ -85,9 +84,6 @@ import { fips } from 'crypto';
         })
         // ----------------
       },
-      getUploadData() {
-        console.log('打印表单数据', this.fileList1)
-      },
       // 处理 ELUpload 上传后的数据，用于表单提交。
       processUploadData(data) {
         // --------------
@@ -120,24 +116,35 @@ import { fips } from 'crypto';
         this.fileList1 = fileList
       },
       postForm() {
-        console.log('postFrom', this.fileList1)
-        var formData = new FormData();
-        formData.append('photo',this.fileList1[0].raw);
-        console.log(formData)
-        this.uploadFileRequest('articles/uploadimg',formData).then(resp=>{
-          if(resp.data.status == 'success'){
+        if(this.fileList1.length==0){
             this.$message({
-              message:'上传成功',
-              type:'success'
-            });
-            alert("上传成功");
-               //清图片
-            var _this=this;
-            var file = this.fileList1[0];
-            this.fileList1.splice(0);
-            _this.handleRemove(file,this.fileList1)
-          }
-        })
+            showClose: true,
+            message: '未添加图片',
+            type: 'error'
+          });
+        }else{
+          var formData = new FormData();
+          this.fileList1.forEach((item,index)=>{
+            let raw = item;
+            console.log(item.raw);
+            formData.append('photo',item.raw);
+          });
+          this.uploadFileRequest('articles/uploadimg',formData).then(resp=>{
+            console.log(resp.data.status);
+            if(resp.data.status){
+              this.$message({
+                message:'上传成功',
+                type:'success'
+              });
+                //清图片
+              var _this=this;
+              this.fileList1.forEach((item,index)=>{
+                  this.fileList1.splice(index);
+              });
+            }
+          })
+        }
+        
       }
     }
   }
