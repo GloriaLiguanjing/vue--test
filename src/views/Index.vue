@@ -51,7 +51,7 @@
     height: 100%;
     top: 0;
     left: 0;
-	z-index:99999;
+	z-index:999;
 }
 .rightcontent-180{
 	margin-left: 180px;
@@ -73,7 +73,7 @@
     position: fixed;
     top: 0;
     width: 100%;
-    z-index: 99998;
+    z-index: 15000;
 	transition-property: width;
 	transition-duration: 1s;
 }

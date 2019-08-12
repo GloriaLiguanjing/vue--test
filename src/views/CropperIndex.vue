@@ -1,7 +1,7 @@
 <template>
   <div class="app">
     <upload-cropper
-      :limit="3"
+      :limit="10"
       :limitSize="1024"
       :on-change="handleOnChange"
       :http-request="handleHttpRequest"
@@ -134,7 +134,8 @@ import { fips } from 'crypto';
             if(resp.data.status){
               this.$message({
                 message:'上传成功',
-                type:'success'
+                type:'success',
+                offset:40
               });
                 //清图片
               var _this=this;

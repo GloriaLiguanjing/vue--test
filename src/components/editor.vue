@@ -112,6 +112,16 @@
 					v-model="articleForm.abstraction">
 					</el-input>
 				</el-form-item>
+				<el-form-item label="封面图">
+					<el-upload
+				    style="width:50%"
+					class="upload-demo"
+					action="https://jsonplaceholder.typicode.com/posts/"
+					:file-list="fileList"
+					list-type="picture">
+					<el-button size="small" type="primary">点击上传</el-button>
+				</el-upload>
+				</el-form-item>
 				<el-form-item>
 					<el-button type="primary"  @click="submitForm('articleForm')">下一步</el-button>
 					<el-button type="primary"  @click="next">xia下一步</el-button>
@@ -140,6 +150,7 @@ import { constants } from 'crypto';
 	export default {
 		data() {
 		  return {
+			 fileList: [{name: 'food.jpeg', url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'}],
 			editor: "",
 			active: 0,
 			categorys: [],
@@ -269,7 +280,7 @@ import { constants } from 'crypto';
             // 显示“网络图片”tab
             this.editor.customConfig.showLinkImg = true;
             // 配置服务器端地址
-            this.editor.customConfig.uploadImgServer = 'http://192.168.124.7:8088/articles/uploadimg';  //改为实际服务器url
+            this.editor.customConfig.uploadImgServer = 'http://192.168.124.6:8088/articles/uploadimg';  //改为实际服务器url
 
             this.editor.customConfig.uploadFileName = 'photo';
             // 将图片大小限制为 3M  默认5M

@@ -5,7 +5,7 @@
         </transition>
         <el-row class="articleShow" :gutter="40">
             <div class="container-fulid" >
-                <el-col :lg="6" :xs="12" :sm="8" :md="8" :xl="4" v-for="(item, index) in articles" :key="index">
+                <el-col :lg="6" :xs="12" :sm="8" :md="8" :xl="4"  v-for="(item, index) in articles" :key="index">
                     <el-card :body-style="{ padding: '5px' }" shadow="hover">
                         <div class="article-item">
                             <div class="content">
@@ -16,7 +16,7 @@
                                 </div>
                                 <div class="article-item-img">
                                     <div class="article-item-img-a">
-                                        <img :src="item.picture" class="image" alt="图片丢了">
+                                        <img v-if="item.picture" :src="item.picture" class="image" alt="图片丢了">
                                     </div>
                                 </div>
                                 <div class="article-item-content">
@@ -55,6 +55,18 @@
                 <el-button type="primary" @click="articleShowCode = false">确 定</el-button>
             </span>
         </el-dialog>
+          <div class="block">
+            <el-pagination
+            style="text-align:center"
+            @size-change="handleSizeChange"
+            @current-change="handleCurrentChange"
+            :current-page.sync="currentPage1"
+            :page-size="12"
+            :page-sizes="[5, 10, 20, 40]"
+            layout="total, prev, pager, next"
+            :total="count">
+            </el-pagination>
+        </div>
     </div>
 </template>
 <style>
@@ -179,20 +191,61 @@ import Loading from './loading.vue'
 export default {
     data() {
         return {
+            count:0,
             articles: [],
             isLoading: true,
             showArticle:{},
-            articleShowCode:false
+            articleShowCode:false,
+            currentPage:1,
+            pagesize:10,
+            data:[]
         };
     },
     components: { Loading },
     methods: {
         initDate() {
-            this.getListRequest('/articles').then(resp => {
-                console.log(resp.data);
-                this.articles = resp.data;
-                this.isLoading = false
+            // this.getListRequest('/articles').then(resp => {
+            //     console.log(resp);
+            //     this.data = resp.data;
+            //     this.articles=this.data.slice((this.currentPage-1)*this.pagesize,this.currentPage*this.pagesize)
+            //     this.isLoading = false;
+            // })
+            this.getRequest('articles/abouts',{
+                page:this.currentPage,
+                size:12,
+                keyword:""
+            }).then(resp=>{
+                console.log(resp);
+                this.articles = resp.data.articles;
+                this.articles.forEach((item,index)=>{
+                   item.picture="http://192.168.124.6:8088/articles/blogimg/"+item.picture;
+                   console.log(item.picture);
+                });
+                 this.count=resp.data.count;
             })
+        },
+        handleSizeChange(val) {
+            
+            console.log(`每页 ${val} 条`);
+        },
+        handleCurrentChange(val) {
+            this.currentPage=val;
+              this.getRequest('articles/abouts',{
+                page:this.currentPage,
+                size:12,
+                keyword:""
+            }).then(resp=>{
+                console.log(resp);
+                this.articles = resp.data.articles;
+                 this.articles.forEach((item,index)=>{
+                   item.picture="http://192.168.124.6:8088/articles/blogimg/"+item.picture;
+                   console.log(item.picture);
+                });
+                this.count=resp.data.count;
+            })
+           // this.currentPage=val;
+           // this.articles=this.data.slice((this.currentPage-1)*this.pagesize,this.currentPage*this.pagesize);
+            console.log(`当前页: ${val}`);
         },
         show(item){
             this.showArticle = item
