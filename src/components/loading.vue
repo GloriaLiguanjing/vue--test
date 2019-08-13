@@ -16,10 +16,10 @@ export default {
 
 <style scoped>
 #preloader_1{
-    position:absolute;
-    width:100%;
-    top: 200%;
-    left: 44%;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    z-index: 99999;
 }
 #preloader_1 span{
     display:block;

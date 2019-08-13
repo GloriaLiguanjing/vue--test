@@ -4,8 +4,8 @@
             <loading v-if="isLoading"></loading>
         </transition>
         <el-row class="articleShow" :gutter="40">
-            <div class="container-fulid" >
-                <el-col :lg="6" :xs="12" :sm="8" :md="8" :xl="4"  v-for="(item, index) in articles" :key="index">
+            <div class="container-fulid">
+                <el-col :lg="6" :xs="12" :sm="8" :md="8" :xl="4" v-for="(item, index) in articles" :key="index">
                     <el-card :body-style="{ padding: '5px' }" shadow="hover">
                         <div class="article-item">
                             <div class="content">
@@ -24,8 +24,11 @@
                                     <span class="article-item-content-abstraction">{{item.abstraction}}</span>
                                     <div class="bottom clearfix">
                                         <el-badge :value="item.upsNum" class="item" type="info">
-                                          <svg t="1564908796453" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="3692" width="25" height="25"><path d="M922.942 423.352c-22.409-28.266-55.958-44.474-92.034-44.474l-220.63 0.913c11.213-31.273 17.396-61.253 23.159-93.74 6.065-34.188 6.303-100.85-12.683-135.648-23.349-42.804-59.815-70.553-111.688-78.261-23.503-3.489-43.712 1.023-60.081 13.422-33.081 25.062-39.15 72.756-46.185 127.977-5.62 44.146-11.991 94.182-33.402 130.048-14.286 23.937-42.101 55.755-118.346 55.755l-79.567 0c-52.985 0-96.092 43.091-96.092 96.057l0 363.154c0 52.964 43.107 96.056 96.092 96.056l579.67 0c26.391 0 52.303-9.027 72.977-25.417 20.681-16.394 35.374-39.568 41.386-65.254l79.753-340.933C953.481 487.917 945.344 451.589 922.942 423.352zM243.623 910.415l-73.786 0c-19.311 0-35.019-15.696-35.019-34.982L134.818 478.526c0-19.285 15.708-34.98 35.019-34.98l73.786 0L243.623 910.415zM898.101 508.191l-83.941 358.848c-5.971 25.535-28.479 43.376-54.728 43.376L287.775 910.415 287.775 455.913c56.953-10.874 99.794-39.876 127.721-86.658 29.75-49.833 37.398-109.915 44.151-162.919 3.051-23.952 5.927-46.577 10.504-63.934 4.908-18.615 9.986-24.067 11.942-25.551 2.237-1.696 6.484-2.09 12.611-1.181 33.821 5.022 57.293 20.36 71.755 46.877 29.68 54.399 16.57 146.214-11.72 208.793-6.774 14.992-5.514 32.164 3.382 45.941 8.879 13.766 23.991 21.979 40.413 21.979l244.838 0c17.272 0 33.324 7.754 44.051 21.28C898.136 474.043 902.027 491.416 898.101 508.191z" p-id="3693"></path><path d="M680.103 510.818" p-id="3694"></path></svg>
-                                        </el-badge> 
+                                            <svg t="1564908796453" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="3692" width="25" height="25">
+                                                <path d="M922.942 423.352c-22.409-28.266-55.958-44.474-92.034-44.474l-220.63 0.913c11.213-31.273 17.396-61.253 23.159-93.74 6.065-34.188 6.303-100.85-12.683-135.648-23.349-42.804-59.815-70.553-111.688-78.261-23.503-3.489-43.712 1.023-60.081 13.422-33.081 25.062-39.15 72.756-46.185 127.977-5.62 44.146-11.991 94.182-33.402 130.048-14.286 23.937-42.101 55.755-118.346 55.755l-79.567 0c-52.985 0-96.092 43.091-96.092 96.057l0 363.154c0 52.964 43.107 96.056 96.092 96.056l579.67 0c26.391 0 52.303-9.027 72.977-25.417 20.681-16.394 35.374-39.568 41.386-65.254l79.753-340.933C953.481 487.917 945.344 451.589 922.942 423.352zM243.623 910.415l-73.786 0c-19.311 0-35.019-15.696-35.019-34.982L134.818 478.526c0-19.285 15.708-34.98 35.019-34.98l73.786 0L243.623 910.415zM898.101 508.191l-83.941 358.848c-5.971 25.535-28.479 43.376-54.728 43.376L287.775 910.415 287.775 455.913c56.953-10.874 99.794-39.876 127.721-86.658 29.75-49.833 37.398-109.915 44.151-162.919 3.051-23.952 5.927-46.577 10.504-63.934 4.908-18.615 9.986-24.067 11.942-25.551 2.237-1.696 6.484-2.09 12.611-1.181 33.821 5.022 57.293 20.36 71.755 46.877 29.68 54.399 16.57 146.214-11.72 208.793-6.774 14.992-5.514 32.164 3.382 45.941 8.879 13.766 23.991 21.979 40.413 21.979l244.838 0c17.272 0 33.324 7.754 44.051 21.28C898.136 474.043 902.027 491.416 898.101 508.191z" p-id="3693"></path>
+                                                <path d="M680.103 510.818" p-id="3694"></path>
+                                            </svg>
+                                        </el-badge>
                                         <el-button type="primary" class="button" size="mini" @click="show(item)">查看</el-button>
                                     </div>
                                 </div>
@@ -37,7 +40,6 @@
         </el-row>
         <el-dialog :title="showArticle.title" :visible.sync="articleShowCode" width="50%">
             <div class="article-publishedTime">
-                
             </div>
             <div class="article-data">
                 <el-tag size="mini">{{showArticle.tagIds}}</el-tag>
@@ -55,16 +57,8 @@
                 <el-button type="primary" @click="articleShowCode = false">确 定</el-button>
             </span>
         </el-dialog>
-          <div class="block">
-            <el-pagination
-            style="text-align:center"
-            @size-change="handleSizeChange"
-            @current-change="handleCurrentChange"
-            :current-page.sync="currentPage1"
-            :page-size="12"
-            :page-sizes="[5, 10, 20, 40]"
-            layout="total, prev, pager, next"
-            :total="count">
+        <div class="block">
+            <el-pagination style="text-align:center" @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page.sync="currentPage1" :page-size="12" :page-sizes="[5, 10, 20, 40]" layout="total, prev, pager, next" :total="count">
             </el-pagination>
         </div>
     </div>
@@ -74,28 +68,35 @@
     font-size: 13px;
     color: #999;
 }
+
 .item {
-  margin-right: 17px;
+    margin-right: 17px;
 }
+
 .bottom {
     margin-top: 13px;
     line-height: 12px;
 }
-.article-data{
+
+.article-data {
     padding-bottom: 10px;
 }
-.el-badge__content--info{
+
+.el-badge__content--info {
     background-color: #ccc !important;
 }
+
 .el-card {
     margin-bottom: 30px;
     color: #7D7D7D !important;
 }
-.article-item-status{
+
+.article-item-status {
     position: absolute;
     z-index: 10;
     top: 5px;
 }
+
 .article-item {
     position: relative;
     width: 100%;
@@ -184,21 +185,26 @@
       padding:20px;
       padding-left:84px;
   } */
-
+.w-e-menu{
+    z-index: 98 !important;
+}
+.w-e-text-container{
+    z-index: 97 !important;
+}
 </style>
 <script>
 import Loading from './loading.vue'
 export default {
     data() {
         return {
-            count:0,
+            count: 0,
             articles: [],
             isLoading: true,
-            showArticle:{},
-            articleShowCode:false,
-            currentPage:1,
-            pagesize:10,
-            data:[]
+            showArticle: {},
+            articleShowCode: false,
+            currentPage: 1,
+            pagesize: 10,
+            data: []
         };
     },
     components: { Loading },
@@ -210,44 +216,46 @@ export default {
             //     this.articles=this.data.slice((this.currentPage-1)*this.pagesize,this.currentPage*this.pagesize)
             //     this.isLoading = false;
             // })
-            this.getRequest('articles/abouts',{
-                page:this.currentPage,
-                size:12,
-                keyword:""
-            }).then(resp=>{
+            this.getRequest('articles/abouts', {
+                page: this.currentPage,
+                size: 12,
+                keyword: ""
+            }).then(resp => {
                 console.log(resp);
                 this.articles = resp.data.articles;
-                this.articles.forEach((item,index)=>{
-                   item.picture="http://192.168.124.6:8088/articles/blogimg/"+item.picture;
-                   console.log(item.picture);
+                this.articles.forEach((item, index) => {
+                    item.picture = "http://192.168.124.6:8088/articles/blogimg/" + item.picture;
+                    console.log(item.picture);
+                    this.isLoading = false;
                 });
-                 this.count=resp.data.count;
+                this.count = resp.data.count;
             })
         },
         handleSizeChange(val) {
-            
+
             console.log(`每页 ${val} 条`);
         },
         handleCurrentChange(val) {
-            this.currentPage=val;
-              this.getRequest('articles/abouts',{
-                page:this.currentPage,
-                size:12,
-                keyword:""
-            }).then(resp=>{
+            this.currentPage = val;
+            this.getRequest('articles/abouts', {
+                page: this.currentPage,
+                size: 12,
+                keyword: ""
+            }).then(resp => {
                 console.log(resp);
                 this.articles = resp.data.articles;
-                 this.articles.forEach((item,index)=>{
-                   item.picture="http://192.168.124.6:8088/articles/blogimg/"+item.picture;
-                   console.log(item.picture);
+                this.articles.forEach((item, index) => {
+                    item.picture = "http://192.168.124.6:8088/articles/blogimg/" + item.picture;
+                    console.log(item.picture);
                 });
-                this.count=resp.data.count;
+                this.count = resp.data.count;
+                this.isLoading = false;
             })
-           // this.currentPage=val;
-           // this.articles=this.data.slice((this.currentPage-1)*this.pagesize,this.currentPage*this.pagesize);
+            // this.currentPage=val;
+            // this.articles=this.data.slice((this.currentPage-1)*this.pagesize,this.currentPage*this.pagesize);
             console.log(`当前页: ${val}`);
         },
-        show(item){
+        show(item) {
             this.showArticle = item
             this.articleShowCode = !this.articleShowCode
         }
