@@ -7,6 +7,7 @@ import Article from './components/Article.vue'
 import Category from './components/Category.vue'
 import Charts from './components/Charts.vue'
 import VueCropper from './views/CropperIndex.vue'
+import FlexPaper from './components/FlexPaper.vue'
 Vue.use(Router)
 
 export default new Router({
@@ -48,6 +49,11 @@ export default new Router({
           path:'/cropper',
           name:'截图',
           component:VueCropper,
+        },
+        {
+          path:'/flexpaper',
+          name:'pdf播放',
+          component:FlexPaper
         }
       ]
     },

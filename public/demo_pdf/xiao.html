@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+		<script type="text/javascript" src="js/jquery.js"></script>
+		<script type="text/javascript" src="js/flexpaper_flash.js"></script>
+		<script type="text/javascript" src="js/flexpaper_flash_debug.js"></script>
+	</head>
+	<body style>
+		<div style="position:absolute;left:10px;top:10px;width:87%;height:66%">
+		            <a id="viewerPlaceHolder" style="width:100%;height:100%;display:block"></a>         
+		            <script type="text/javascript"> 
+		                var fp = new FlexPaperViewer(    
+		                         'FlexPaperViewer', 
+		                         'viewerPlaceHolder',    
+		                         { config : {
+		                         SwfFile : escape('b.swf'),  
+		                         Scale : 1.2, 
+		                         ZoomTransition : 'easeOut',
+		                         ZoomTime : 0.5,
+		                         ZoomInterval : 0.2,
+		                         FitPageOnLoad : true,
+		                         FitWidthOnLoad : false,
+		                         PrintEnabled : true,
+		                         FullScreenAsMaxWindow : false,
+		                         ProgressiveLoading : false,
+		                         MinZoomSize : 0.2,
+		                         MaxZoomSize : 5,
+		                         SearchMatchAll : false,
+		                         InitViewMode : 'Portrait',
+		                         
+		                         ViewModeToolsVisible : false,
+		                         ZoomToolsVisible : false,
+		                         NavToolsVisible : false,
+		                         CursorToolsVisible : false,
+		                         SearchToolsVisible : false,
+		                           localeChain: 'zh_CN'
+		                         }});
+		            </script>
+		        </div>
+	</body>
+</html>

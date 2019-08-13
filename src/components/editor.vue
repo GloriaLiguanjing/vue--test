@@ -112,7 +112,7 @@
 					v-model="articleForm.abstraction">
 					</el-input>
 				</el-form-item>
-				<el-form-item label="封面图">
+				<!-- <el-form-item label="封面图">
 					<el-upload
 				    style="width:50%"
 					class="upload-demo"
@@ -121,7 +121,7 @@
 					list-type="picture">
 					<el-button size="small" type="primary">点击上传</el-button>
 				</el-upload>
-				</el-form-item>
+				</el-form-item> -->
 				<el-form-item>
 					<el-button type="primary"  @click="submitForm('articleForm')">下一步</el-button>
 					<el-button type="primary"  @click="next">xia下一步</el-button>
@@ -150,7 +150,6 @@ import { constants } from 'crypto';
 	export default {
 		data() {
 		  return {
-			 fileList: [{name: 'food.jpeg', url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'}],
 			editor: "",
 			active: 0,
 			categorys: [],
@@ -209,6 +208,7 @@ import { constants } from 'crypto';
 			this.editor = new E('#editor');	
 			this.setMenus();//设置菜单
 			this.editor.create();//创建编辑器
+			 $('#editor').attr('style','height:auto;');
 			this.editor.change = function() { // 这里是change 不是官方文档中的 onchange
 			  console.log(this.txt.html());// 编辑区域内容变化时，实时打印出当前内容
 			  _this.$emit('changeHtml', this.txt.html());
@@ -240,7 +240,8 @@ import { constants } from 'crypto';
 				this.$refs[formName].resetFields();
 			},
 		next() {
-				 if (++this.active > 2) this.active = 0;
+			 if (++this.active > 2) this.active = 0;
+			//	this.active = 0;
 			},
 		Predept(){
 			this.active=0;
@@ -280,7 +281,7 @@ import { constants } from 'crypto';
             // 显示“网络图片”tab
             this.editor.customConfig.showLinkImg = true;
             // 配置服务器端地址
-            this.editor.customConfig.uploadImgServer = 'http://192.168.124.6:8088/articles/uploadimg';  //改为实际服务器url
+            this.editor.customConfig.uploadImgServer = 'http://192.168.124.6:8088/articles/uploadFile';  //改为实际服务器url
 
             this.editor.customConfig.uploadFileName = 'photo';
             // 将图片大小限制为 3M  默认5M
