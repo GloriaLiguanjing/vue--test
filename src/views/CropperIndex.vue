@@ -1,26 +1,49 @@
 <template>
-  <div class="app">
-    <upload-cropper
-      :limit="10"
-      :limitSize="1024"
-      :on-change="handleOnChange"
-      :http-request="handleHttpRequest"
-      :on-success="handleSuccess"
-      :on-error="handleError"
-      :on-remove="handleRemove"
-      :fileList="fileList1"
-      :cropper="{
-        height: 300,
-        autoCrop: true,
-        autoCropWidth: 300,
-        autoCropHeight: 200,
-        fixed: false
-      }"></upload-cropper>
+   <div class="cropper">
+        <div class="demo-image">
+        <div class="block" v-for="fit in pictures" :key="fit">
+          <el-image
+            style="width: 150px; height: 150px; float:left; padding:10px;"
+            :src="fit"
+            ></el-image>
+        </div>
+      </div>
+      
+      <div style="">
+      <upload-cropper
+        :limit="10"
+        :limitSize="1024"
+        :on-change="handleOnChange"
+        :http-request="handleHttpRequest"
+        :on-success="handleSuccess"
+        :on-error="handleError"
+        :on-remove="handleRemove"
+        :fileList="fileList1"
+        :cropper="{
+          height: 300,
+          autoCrop: true,
+          autoCropWidth: 300,
+          autoCropHeight: 200,
+          fixed: false
+        }"></upload-cropper>
 
-    <!-- 确认上传 -->
-    <el-button @click="" style="margin-top:10px;">取 消</el-button>
-    <el-button type="primary" @click="postForm()" style="margin-top:10px;">上传</el-button>
+      <!-- 确认上传 -->
+      <el-button @click="" style="margin-top:10px;">取 消</el-button>
+      <el-button type="primary" @click="postForm()" style="margin-top:10px;">上传</el-button>
+      <!-- <span v-for="(item, index) in pictures" :key="index" style="display:line">
+          <img v-if="item" :src="item" class="image" style="width:100px;height:100px;">
+      </span> -->
+    
+      <!-- <div class="demo-image__preview">
+        <el-image 
+          style="width: 100px; height: 100px"
+          :src="pictures[0]" 
+          :preview-src-list="pictures">
+        </el-image>
+      </div> -->
+    </div>
   </div>
+    
 </template>
 
 <script>
@@ -33,7 +56,8 @@ import { fips } from 'crypto';
       return {
         // 初始化数据
         fileList1: [],
-        fileListMap: {} // 键值对，用来存储上传图片后的 uid:url
+        fileListMap: {}, // 键值对，用来存储上传图片后的 uid:url
+        pictures:[]
       }
     },
     methods: {
@@ -129,15 +153,22 @@ import { fips } from 'crypto';
             console.log(item.raw);
             formData.append('photo',item.raw);
           });
-          this.uploadFileRequest('articles/uploadimg',formData).then(resp=>{
-            console.log(resp.data.status);
+          this.uploadFileRequest('articles/uploadFile',formData).then(resp=>{
+            var photo =[],
+            photo = resp.data.data;
             if(resp.data.status){
               this.$message({
                 message:'上传成功',
                 type:'success',
                 offset:40
               });
+              photo.forEach((item,index)=>{
+                console.log(item);
+                 this.pictures.push(item);
+              });
+             
                 //清图片
+              console.log(this.pictures);
               var _this=this;
               this.fileList1.forEach((item,index)=>{
                   this.fileList1.splice(index);
@@ -152,8 +183,17 @@ import { fips } from 'crypto';
 </script>
 
 <style>
-.app {
+.cropper {
   margin-left: 20px;
   margin-top: 60px;
+  padding:20px;
+  width:100%;
+  height:100%;
+  background-color: #ffffff;
+
+}
+.demo-image{
+
+  left:180px;
 }
 </style>
