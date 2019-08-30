@@ -1,6 +1,6 @@
 <template>
   <div id="flexpaper">
-      <iframe src="demo_pdf/xiao.html" frameborder="0" style="height:800px;"></iframe>
+      <iframe src="demo_pdf/xiao.html" frameborder="0" style="height:800px"></iframe>
   </div>
 </template>
 <style>

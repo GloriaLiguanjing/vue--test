@@ -204,7 +204,8 @@ export default {
             articleShowCode: false,
             currentPage: 1,
             pagesize: 10,
-            data: []
+            data: [],
+            server_config:this.global.server_config
         };
     },
     components: { Loading },
@@ -224,7 +225,7 @@ export default {
                 console.log(resp);
                 this.articles = resp.data.articles;
                 this.articles.forEach((item, index) => {
-                    item.picture = "http://192.168.124.6:8088/articles/blogimg/" + item.picture;
+                    item.picture = this.server_config.url+"/articles/blogimg/" + item.picture;
                     console.log(item.picture);
                     this.isLoading = false;
                 });
@@ -245,7 +246,7 @@ export default {
                 console.log(resp);
                 this.articles = resp.data.articles;
                 this.articles.forEach((item, index) => {
-                    item.picture = "http://192.168.124.6:8088/articles/blogimg/" + item.picture;
+                    item.picture = "http://192.168.124.7:8088/articles/blogimg/" + item.picture;
                     console.log(item.picture);
                 });
                 this.count = resp.data.count;

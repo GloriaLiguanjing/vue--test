@@ -1,6 +1,5 @@
 <template>
   <div id="app">
-
     <!-- <span class="iconfont icon-tupianshangchuan"></span> -->
     <router-view/>
   </div>

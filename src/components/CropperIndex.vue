@@ -1,350 +1,188 @@
-<script>
-  import UploadExtendCropper from './VueCro.vue'
-  import vueCropper          from 'vue-cropper'
- 
-  function noop() {}
+<template>
+   <div class="cropper">
+        <div class="demo-image">
+        <div class="block" v-for="fit in pictures" :key="fit">
+          <el-image
+            style="width: 150px; height: 150px; float:left; padding:10px;"
+            :src="fit"
+            ></el-image>
+        </div>
+      </div>
+      
+      <div v-if="upload">
+      <upload-cropper
+        :limit="1"
+        :limitSize="1024"
+        :on-change="handleOnChange"
+        :http-request="handleHttpRequest"
+        :on-success="handleSuccess"
+        :on-error="handleError"
+        :on-remove="handleRemove"
+        :fileList="fileList1"
+        :cropper="{
+          height: 300,
+          autoCrop: true,
+          autoCropWidth: 300,
+          autoCropHeight: 200,
+          fixed: false
+        }"></upload-cropper>
 
+      <!-- 确认上传 -->
+      <el-button type="primary" @click="postForm()" style="margin-top:10px;">上传</el-button>
+    </div>
+  </div>
+    
+</template>
+
+<script>
   export default {
-    name: 'UploadCropper',
-    props: {
-      refName: {
-        type: String,
-        default: 'photoUpload'
-      },
-      action: {
-        type: String,
-        default: 'unused'
-      },
-      headers: {
-        type: Object,
-        default() {
-          return {}
-        }
-      },
-      data: Object,
-      name: {
-        type: String,
-        default: 'file'
-      },
-      withCredentials: Boolean,
-      showFileList: {
-        type: Boolean,
-        default: true
-      },
-      accept: {
-        type: String,
-        default: 'image/*'
-      },
-      type: {
-        type: String,
-        default: 'select'
-      },
-      beforeUpload: Function,
-      beforeRemove: Function,
-      onRemove: {
-        type: Function,
-        default: noop
-      },
-      onChange: {
-        type: Function,
-        default: noop
-      },
-      onPreview: {
-        type: Function,
-        default: noop
-      },
-      onSuccess: {
-        type: Function,
-        default: noop
-      },
-      onProgress: {
-        type: Function,
-        default: noop
-      },
-      onError: {
-        type: Function,
-        default: noop
-      },
-      fileList: {
-        type: Array,
-        default() {
-          return []
-        }
-      },
-      autoUpload: {
-        type: Boolean,
-        default: true
-      },
-      listType: {
-        type: String,
-        default: 'picture-card' // text,picture,picture-card
-      },
-      httpRequest: Function,
-      disabled: Boolean,
-      limit: Number,
-      limitSize: Number,
-      onExceed: {
-        type: Function,
-        default: noop
-      },
-      cropper: Object,
-      // 表单提交使用的方法
-      method: {
-        type: String,
-        default: 'post'
-      }
-    },
-    components: {
-      UploadExtendCropper,
-      vueCropper
-    },
+    name: 'exampleUploadCropper',
+    props:['id'],
     data() {
       return {
-        hideUploadBtn: false, // 是否隐藏上传图片按钮
-        showCropperDialog: false, // 是否显示裁剪弹窗
-        fileListCopy: this.fileList,
-        // 预览图片
-        dialogPreview: {
-          dialogImageUrl: '',
-          dialogVisible: false
-        },
-        cropperOpts: Object.assign({}, {
-          height: 300, // 默认裁剪框高度，单位 px
-          img: '', // 裁剪图片的地址
-          outputSize: 1, // 裁剪生成图片的质量
-          outputType: 'jpeg', // 裁剪生成图片的格式
-          canScale: true, // 图片是否允许滚轮缩放
-          autoCrop: true, // 是否默认生成截图框
-          // 只有自动截图开启 宽度高度才生效
-          autoCropWidth: 300, // 默认生成截图框宽度
-          autoCropHeight: 300, // 默认生成截图框高度
-          fixed: false, // 是否开启截图框宽高固定比例
-          fixedNumber: [1, 1], // 截图框的宽高比例
-          full: true, // 是否输出原图比例的截图
-          fixedBox: false, // 固定截图框大小 不允许改变
-          canMove: true, // 上传图片是否可以移动
-          canMoveBox: true, // 截图框能否拖动
-          original: false // 上传图片按照原始比例渲染
-        }, this.cropper)
-      }
-    },
-    computed: {
-      // 已选图片是否超过图片数量限制
-      isImageOverLimit() {
-        return this.fileListCopy.length >= this.limit
+        // 初始化数据
+        fileList1: [],
+        fileListMap: {}, // 键值对，用来存储上传图片后的 uid:url
+        pictures:[],
+        upload:true
       }
     },
     methods: {
-      handleHttpRequest(options) {
-        const ajax = this.method === 'put' ? putAjax : postAjax
-        return this.httpRequest ? this.httpRequest(options, ajax) : ajax(options)
-      },
-      getUploadComponent() {
-        return this.$refs[this.refName]
-      },
-      getCropperComponent() {
-        return this.$refs[this.refName + 'Cropper']
+      handleOnChange(file, fileList) {
+        console.log('onChange', file, fileList)
+        console.log('onChange:fileList1', this.fileList1)
+        this.fileList1 = fileList
       },
       handleRemove(file, fileList) {
-        this.fileListCopy = fileList
-        this.onRemove(file, fileList)
+        console.log('onRemove', file, fileList)
+        console.log('onRemove:fileList1', this.fileList1)
+        this.fileList1 = fileList
       },
-      // 点击预览按钮
-      handlePreview(file) {
-        this.dialogPreview.dialogImageUrl = file.url
-        this.updatePreviewVisible(true)
-        this.onPreview(file)
+      handleHttpRequest(options, ajax) {
+        // --------------
+        // 此处可用此方法动态修改请求 options，默认使用 ajax 发送请求，但只限于 form-data 形式表单 post|put 提交
+        // options.action = '1231231'
+        // options.headers = {
+        //   'Accept': 'application/json',
+        //   'X-Requested-With': 'XMLHttpRequest'
+        // }
+        // ajax(options)
+        // --------------
+
+        // ---------------
+        // 若要自定义发送请求，此处一定要是 Promise 类的异步函数，才会执行 onSuccess 等回调
+        // 此处以 axios 发送请求举例
+        return new Promise((resolve, reject) => {
+          // ---------
+          // 自定义请求的进度条
+          // this.fileList1.forEach((item, index) => {
+          //   if (item.uid === options.file.uid) {
+          //     axios.post('https://a76a9787-346f-4247-83df-3c735332f3a2.mock.pstmn.io/create', {}, {
+          //       onUploadProgress: progressEvent => {
+          //         var complete = (progressEvent.loaded / progressEvent.total * 100 | 0) + '%'
+          //         item.status = 'uploading'
+          //         item.percentage = complete || 0
+          //         console.log('上传进度：', complete)
+          //       }
+          //     }).then(() => {
+          //       console.log('上传成功')
+          //       resolve()
+          //     })
+          //   }
+          // })
+          // ---------
+          resolve()
+        })
+        // ----------------
       },
-      updatePreviewVisible(val) {
-        this.dialogPreview.dialogVisible = val
-      },
-      // 选择完本地图片
-      handleChoose(ev) {
-        this.uploadImg(ev)
-      },
-      handleChange(file, fileList) {
-        this.fileListCopy = fileList
-        this.onChange(file, fileList)
-        if (this.autoUpload) {
-          this.getUploadComponent().$refs['upload-inner'].upload.call(this, file)
-        }
+      // 处理 ELUpload 上传后的数据，用于表单提交。
+      processUploadData(data) {
+        // --------------
+        // 结果输出[url1, url1, url3]
+        // const result = []
+        // data.forEach(item => {
+        //   if (item.uid && item.status && item.status === 'success') {
+        //     result.push(this.fileListMap[item.uid] || item.url)
+        //   } else if (!item.status && item.url) {
+        //     result.push(item.url)
+        //   }
+        // })
+        // return result
+        // ---------------
       },
       handleSuccess(res, file, fileList) {
-        this.fileListCopy = fileList
-        this.onSuccess(res, file, fileList)
+        console.log('onSuccess', res, file, fileList)
+        console.log('onSuccess:fileList1', this.fileList1)
+        this.fileList1 = fileList // 上传成功后赋值
+        // 替换 url
+        // this.fileList1.forEach(item => {
+        //   if (item.uid === file.uid) {
+        //     item.url = this.fileListMap[file.uid] || item.url
+        //   }
+        // })
       },
       handleError(res, file, fileList) {
-        this.fileListCopy = fileList
-        this.onError(res, file, fileList)
+        console.log('onError', res, file, fileList)
+        console.log('onError:fileList1', this.fileList1)
+        this.fileList1 = fileList
       },
-      // 上传本地图片到裁剪组件
-      uploadImg(ev) {
-        const _this = this
-        const file = ev.target.files[0]
-        if (!/\.(gif|jpg|jpeg|png|GIF|JPG|PNG)$/.test(ev.target.value)) {
-          _this.$message.error('图片类型必须是 gif, jpeg, jpg, png 中的一种!')
-          return false
+      postForm() {
+        if(this.fileList1.length==0){
+            this.$message({
+            showClose: true,
+            message: '未添加图片',
+            type: 'error'
+          });
+        }else{
+          var formData = new FormData();
+          this.fileList1.forEach((item,index)=>{
+            let raw = item;
+            console.log(item.raw);
+            formData.append('file',item.raw);
+          });
+          this.uploadFileRequest('articles/uploadFile',formData).then(resp=>{
+            var photo =[];
+            console.log(resp);
+            photo = resp.data.data;
+            if(resp.data.status){
+              this.$message({
+                message:'上传成功',
+                type:'success',
+                offset:40
+              });
+              this.upload=false;
+              photo.forEach((item,index)=>{
+                console.log(item);
+                 this.pictures.push(item);
+              });
+             
+                //清图片
+              console.log(this.upload);
+              var _this=this;
+              this.fileList1.forEach((item,index)=>{
+                  this.fileList1.splice(index);
+              });
+              
+            }
+          })
         }
-        if (_this.limitSize) {
-          const kbSize = file.size / 1024
-          if (kbSize > _this.limitSize) {
-            const temp = _this.limitSize / 1024 // limitSize 单位：kb
-            const tip = (temp >= 1) ? temp + 'MB' : _this.limitSize + 'KB'
-            _this.$message.error(`图片大小不能超过${tip}!`)
-            return false
-          }
-        }
-        const reader = new FileReader()
-        reader.onload = (e) => {
-          // 把Array Buffer转化为blob 如果是base64不需要
-          const data = (typeof e.target.result) === 'object' ? window.URL.createObjectURL(new Blob([e.target.result]))
-            : e.target.result
-          _this.cropperOpts.img = data
-          _this.showCropperDialog = true // 显示弹窗
-        }
-        // reader.readAsDataURL(file) // 转化为base64
-        reader.readAsArrayBuffer(file) // 转化为blob
-      },
-      // 取消图片裁剪
-      cancelCropper() {
-        const cropperComponent = this.getCropperComponent()
-        if (cropperComponent) {
-          cropperComponent.clearCrop() // clear
-          this.showCropperDialog = false
-        } else {
-          return
-        }
-      },
-      // 确认图片裁剪
-      confirmCropper() {
-        // 防止重复点击确定按钮导致重复绑定数据
-        if(this.showCropperDialog) {
-          const cropperComponent = this.getCropperComponent()
-          if (cropperComponent) {
-            cropperComponent && cropperComponent.startCrop() // start
-            this.outputCropResult()
-          } else {
-            return
-          }
-        }
-      },
-      // 输出裁剪结果
-      outputCropResult() {
-        const _this = this
-        // 获取截图的blob数据
-        this.getCropperComponent().getCropBlob((blob) => {
-          // 模仿图片组件内部构建对象的方式
-          blob.uid = Date.now()
-          blob.name = blob.uid + '.jpg'
-          const file = {
-            status: 'ready',
-            name: blob.name,
-            size: blob.size,
-            percentage: 0,
-            uid: blob.uid,
-            raw: blob
-          }
-          try {
-            file.url = window.URL.createObjectURL(blob)
-          } catch (err) {
-            console.error(err)
-            return
-          }
-          _this.showCropperDialog = false // 关闭裁剪弹窗
-          _this.showCropperDialog && _this.getUploadComponent().uploadFiles.push(file)
-          _this.fileListCopy.push(file)
-          _this.handleChange(file, _this.fileListCopy)
-        })
+        
       }
-    },
-    render(h) {
-      // 上传组件
-      const uploadData = {
-        props: {
-          type: this.type,
-          'before-upload': this.beforeUpload,
-          'with-credentials': this.withCredentials,
-          action: this.action,
-          headers: this.headers,
-          name: this.name,
-          data: this.data,
-          accept: this.accept,
-          'file-list': this.fileListCopy,
-          'auto-upload': this.autoUpload,
-          'list-type': this.listType,
-          disabled: this.disabled,
-          limit: this.limit,
-          'on-exceed': this.onExceed,
-          'on-progress': this.onProgress,
-          'on-success': this.handleSuccess,
-          'on-error': this.handleError,
-          'on-preview': this.handlePreview,
-          'on-remove': this.handleRemove,
-          'on-choose': this.handleChoose,
-          'http-request': this.handleHttpRequest
-        },
-        ref: this.refName,
-        class: {
-          'upload-cropper': true,
-          'hide-upload-btn': this.isImageOverLimit
-        }
-      }
-      // 预览弹窗
-      const previewDialogData = {
-        props: {
-          visible: this.dialogPreview.dialogVisible
-        },
-        on: {
-          'update:visible': this.updatePreviewVisible
-        }
-      }
-      // 裁剪组件
-      const cropperData = {
-        props: this.cropperOpts,
-        ref: this.refName + 'Cropper'
-      }
-      return (
-        <div>
-          <upload-extend-cropper { ...uploadData }>
-            <i class='el-icon-plus'></i>
-            { this.$slots.default }
-          </upload-extend-cropper>
-
-          <el-dialog { ...previewDialogData }>
-            <img width='100%' src={ this.dialogPreview.dialogImageUrl }/>
-          </el-dialog>
-
-          <el-dialog title='图片裁剪' width='80%' center
-            visible={ this.showCropperDialog } { ...{ on: { 'update:visible': val => { this.showCropperDialog = val } }}}>
-            <vue-cropper { ...{ style: { height: this.cropperOpts.height + 'px' } }} { ...cropperData }></vue-cropper>
-            <span slot='footer' class='dialog-footer'>
-              <el-button { ...{ on: { click: this.cancelCropper }}}>取 消</el-button>
-              <el-button type='primary' { ...{ on: { click: this.confirmCropper }}}>确 定</el-button>
-            </span>
-          </el-dialog>
-        </div>
-      )
     }
   }
 </script>
 
 <style>
-  /* 是否显示上传图片按钮 */
-  .hide-upload-btn .el-upload {
-    display: none;
-  }
-  .upload-cropper .el-upload-list--picture-card{
-    display: inline-flex;
-  }
-  .upload-cropper .el-upload-list--picture-card .el-upload-list__item{
-    display: inline-flex;
-    align-items: center;
-    justify-content:center;
-  }
-  .upload-cropper .el-upload-list--picture-card .el-upload-list__item-thumbnail{
-    width: auto;
-    height: auto;
-    max-width: 100%;
-    max-height: 100%;
-  }
+.cropper {
+
+  padding:20px;
+  width:100%;
+  height:100%;
+  background-color: #ffffff;
+
+}
+.demo-image{
+
+  left:180px;
+}
 </style>

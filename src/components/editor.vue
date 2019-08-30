@@ -30,9 +30,7 @@
 				</el-form-item></el-col>
 				<el-col :span="12">
 				<el-form-item label="栏目" prop="categoryId">
-				
-					    <el-cascader :options="categorys" clearable v-model="articleForm.categoryId" filterable  :props="{ multiple: false,value:'id',emitPath:false,label:'name' }"></el-cascader>
-			
+					    <el-cascader :options="categorys" clearable v-model="articleForm.categoryId" filterable  :props="{ multiple: false,value:'id',emitPath:false,label:'name' }"></el-cascader>			
 				</el-form-item>
                 </el-col>
 				</el-row>
@@ -89,8 +87,7 @@
 						</el-form-item>
 					</el-col>
 					
-				</el-row>			
-						
+				</el-row>								
 	            <el-row>
 					<el-col :span="12">
 						<el-form-item label="组织机构" prop="orgId">	  
@@ -102,8 +99,7 @@
 							<el-input class="mimInput" v-model="articleForm.orgCode"></el-input>
 						</el-form-item>
 					</el-col>
-				</el-row>		
-					
+				</el-row>						
 				<el-form-item label="摘要" prop="abstraction">
 				  <el-input
 					type="textarea"
@@ -112,16 +108,6 @@
 					v-model="articleForm.abstraction">
 					</el-input>
 				</el-form-item>
-				<!-- <el-form-item label="封面图">
-					<el-upload
-				    style="width:50%"
-					class="upload-demo"
-					action="https://jsonplaceholder.typicode.com/posts/"
-					:file-list="fileList"
-					list-type="picture">
-					<el-button size="small" type="primary">点击上传</el-button>
-				</el-upload>
-				</el-form-item> -->
 				<el-form-item>
 					<el-button type="primary"  @click="submitForm('articleForm')">下一步</el-button>
 					<el-button type="primary"  @click="next">xia下一步</el-button>
@@ -144,12 +130,13 @@
 </template>
  
 <script>
-	import E from 'wangeditor'
-	import axios from 'axios'
+import E from 'wangeditor'
+import axios from 'axios'
 import { constants } from 'crypto';
 	export default {
 		data() {
 		  return {
+			server_config:this.global.server_config,
 			editor: "",
 			active: 0,
 			categorys: [],
@@ -281,7 +268,7 @@ import { constants } from 'crypto';
             // 显示“网络图片”tab
             this.editor.customConfig.showLinkImg = true;
             // 配置服务器端地址
-            this.editor.customConfig.uploadImgServer = 'http://192.168.124.6:8088/articles/uploadFile';  //改为实际服务器url
+            this.editor.customConfig.uploadImgServer = this.server_config.url+'articles/uploadFile';  //改为实际服务器url
 
             this.editor.customConfig.uploadFileName = 'photo';
             // 将图片大小限制为 3M  默认5M

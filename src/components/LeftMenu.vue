@@ -25,34 +25,34 @@
 import axios from 'axios'
 
 export default {
-    name: "leftmenu",
-    data() {
-        return {
-            items: [],
-            isCollapse: ''
-        };
-    },
-    methods: {
-        initDate() {
-            axios({
-                url: 'http://localhost:3000/items',
-                method: 'get'
-            }).then((response) => {
-                // console.log(response.data);
-                this.items = response.data;
-                console.log(this.items)
-            })
-        }
-    },
-    mounted: function() {
-        this.initDate();
-        this.isCollapse = false;
-        this.bus.$on('menuState', res => {
-            this.isCollapse = res
-            console.log(res)
-        })
+  name: 'leftmenu',
+  data () {
+    return {
+      items: [],
+      isCollapse: ''
     }
-};
+  },
+  methods: {
+    initDate () {
+      axios({
+        url: 'http://localhost:3000/items',
+        method: 'get'
+      }).then((response) => {
+        // console.log(response.data);
+        this.items = response.data
+        console.log(this.items)
+      })
+    }
+  },
+  mounted: function () {
+    this.initDate()
+    this.isCollapse = false
+    this.bus.$on('menuState', res => {
+      this.isCollapse = res
+      console.log(res)
+    })
+  }
+}
 </script>
 <style scoped>
 .menu_page {
@@ -74,8 +74,6 @@ export default {
     width: 180px;
     min-height: 400px;
 }
-
-
 
 .el-submenu .el-menu-item {
     min-width: 180px;
